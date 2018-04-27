@@ -1,1 +1,106 @@
+package org.totalbeginner.tutorial;
+import java.sql.*;
+//Connection.con;
+import java.util.*;
+import java.sql.*;
+
+
+public class Person {
+	
+	Connection con;
+	
+	// fields
+	private String name; // name of the person
+	private int maximumBooks; // most books the person can check out
+	// constructors
+	public Person() {
+	name = "unknown name";
+	maximumBooks = 3;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getMaximumBooks() {
+		return maximumBooks;
+	}
+	public void setMaximumBooks(int maximumBooks) {
+		this.maximumBooks = maximumBooks;
+	}
+	
+	void makeConnection(){
+		
+		try{
+		Class.forName("org.sqlite.JDBC").newInstance();	
+		String myUrl="jdbc:sqlite:c://Users//Harley Starbuck//Documents//BACH OF INFO TECH//SQLstudio//totalBeginner";
+		con = DriverManager.getConnection(myUrl);
+		
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		con.close();
+	}
+	
+	String sqlQuery(){
+		String result="";
+		try{
+			makeConnection();
+			String query = "select * from person where name =?";
+			PreparedStatement stmt = con.prepareStatement(query);
+			
+			String nme = getName();
+			stmt.setString(1, nme);
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				String name = rs.getString(1);
+				int nb = rs.getInt(2);
+				
+				result = name + " can borrow \n" + nb + " books \n";
+				
+			}
+			con.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			result= "query failed";
+			
+		
+		return result;
+	}
+
+	 String insert(){
+		 
+		    String result="";
+		    try{
+		    		makeConnection();
+		    		String ins= "insert into person values (?,?)";
+		    		PreparedStatement stmt=con.prepareStatement(ins);
+		    		
+		    		String nme= getName();
+		    		stmt.setString(1, nme);
+		    		int mb= getMaximumBooks();
+		    		stmt.setInt(2, mb);
+		    		
+		    		int i= stmt.executeUpdate();
+		    		result = "successfully inserted \n"+nme +"and "+mb;
+			{con.close();
+			}		
+			
+
+		    			catch(Exception e){
+		    				e.printStackTrace();
+		    				result= "update failed";
+		    			}				
+		    			
+		    			
+		    		
+			return result;
+		 
+	 }
+
+	}
 
